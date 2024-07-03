@@ -14,7 +14,6 @@ class WeatherLocationCell: UITableViewCell {
         let label = UILabel()
         
         label.font = UIFont.systemFont(ofSize: 15, weight: .medium)
-        label.text = "12:06"
         label.textColor = UIColor.transparentBlackFourty
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -25,8 +24,7 @@ class WeatherLocationCell: UITableViewCell {
         let label = UILabel()
         
         label.font = UIFont.systemFont(ofSize: 21, weight: .medium)
-        label.text = "Agadir"
-        label.textColor = UIColor.transparentBlackNinty
+        label.textColor = UIColor.transparentBlackSeventy
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -36,7 +34,6 @@ class WeatherLocationCell: UITableViewCell {
         let label = UILabel()
         
         label.font = UIFont.systemFont(ofSize: 15, weight: .medium)
-        label.text = "Rainy"
         label.textColor = UIColor.transparentBlackFourty
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -47,8 +44,7 @@ class WeatherLocationCell: UITableViewCell {
         let label = UILabel()
         
         label.font = UIFont.systemFont(ofSize: 33, weight: .medium)
-        label.text = "22º"
-        label.textColor = UIColor.transparentBlackNinty
+        label.textColor = UIColor.transparentBlackSeventy
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -58,7 +54,6 @@ class WeatherLocationCell: UITableViewCell {
         let label = UILabel()
         
         label.font = UIFont.systemFont(ofSize: 15, weight: .medium)
-        label.text = "L:18º H:27º"
         label.textColor = UIColor.transparentBlackFourty
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -68,7 +63,6 @@ class WeatherLocationCell: UITableViewCell {
     internal lazy var weatherImage: UIImageView = {
         let imageView = UIImageView()
 
-        imageView.image = UIImage(named: "sun")
         imageView.contentMode = .scaleAspectFit
         imageView.translatesAutoresizingMaskIntoConstraints = false
 
@@ -85,7 +79,6 @@ class WeatherLocationCell: UITableViewCell {
     }
     
     func setupUIs() {
-//        contentView.addSubview(timeLabel)
         contentView.addSubview(locationName)
         contentView.addSubview(weatherType)
         contentView.addSubview(temperatureDegree)
@@ -122,5 +115,10 @@ class WeatherLocationCell: UITableViewCell {
         ])
         
     }
-    
+
+    private func setupSelectionColor() {
+        let selectedBackgroundView = UIView()
+        selectedBackgroundView.backgroundColor = .transparentLightGray
+        self.selectedBackgroundView = selectedBackgroundView
+    }
 }

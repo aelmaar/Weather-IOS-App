@@ -7,13 +7,16 @@
 
 import UIKit
 
-// MARK - UIViews
-// Initialize separate UIViews and each have it's own subviews
+// UTILITY
+private func convertWindSpeedToKmh(_ speedInMps: Double) -> Int {
+    return Int(speedInMps * 3.6)
+}
 
 class WeatherDetailViewController: UIViewController {
 
     private let containerView = UIView()
-
+    var weatherDetailData: WeatherDetailData!
+    
     var temperatueDegree: UILabel = {
         let label = UILabel()
         
@@ -24,9 +27,9 @@ class WeatherDetailViewController: UIViewController {
         
         return label
     }()
-   
+
     var weatherImage: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "sun"))
+        let imageView = UIImageView()
 
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFit
@@ -59,14 +62,20 @@ class WeatherDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        title = "Agadir"
-        
+        title = weatherDetailData.locationName
+        navigationItem.largeTitleDisplayMode = .never
+
         setupWeatherMainUI()
         setupWeatherDetailUI()
     }
 
     private func setupWeatherMainUI() {
-//        containerView.backgroundColor = .lightGray
+        // Fill the informations
+        temperatueDegree.text = "\(weatherDetailData.temp)º"
+        weatherDescription.text = "\(weatherDetailData.description)"
+        temperatureLowHighDegree.text = "L:\(weatherDetailData.tempMin)º, H:\(weatherDetailData.tempMax)º"
+        weatherImage.image = UIImage(named: weatherDetailData.imageName)
+
         containerView.translatesAutoresizingMaskIntoConstraints = false
             
         containerView.addSubview(temperatueDegree)
@@ -97,18 +106,18 @@ class WeatherDetailViewController: UIViewController {
             temperatureLowHighDegree.centerXAnchor.constraint(equalTo: weatherDescription.centerXAnchor)
         ])
     }
-    
+
     private func setupWeatherDetailUI() {
         let weatherDetailContainer = UIView()
 
         weatherDetailContainer.translatesAutoresizingMaskIntoConstraints = false
         
-        let warmView = weatherDetailInfoComponent(imageName: "celsius", fieldText: "Feel like", fieldValue: "26º")
-        let windView = weatherDetailInfoComponent(imageName: "wind", fieldText: "Wind", fieldValue: "20 km")
-        let humidityView = weatherDetailInfoComponent(imageName: "humidity", fieldText: "Humidity", fieldValue: "89%")
-        let pressureView = weatherDetailInfoComponent(imageName: "thermometer", fieldText: "Pressure", fieldValue: "1013hPa")
-        let visibilityView = weatherDetailInfoComponent(imageName: "visibility", fieldText: "Visibility", fieldValue: "10 km")
-        let cloudinessView = weatherDetailInfoComponent(imageName: "cloud", fieldText: "Cloudiness", fieldValue: "0%")
+        let warmView = weatherDetailInfoComponent(imageName: "celsius", fieldText: "Feel like", fieldValue: "\(weatherDetailData.feelsLike)º")
+        let windView = weatherDetailInfoComponent(imageName: "wind", fieldText: "Wind", fieldValue: "\(convertWindSpeedToKmh(weatherDetailData.windSpeed)) km/h")
+        let humidityView = weatherDetailInfoComponent(imageName: "humidity", fieldText: "Humidity", fieldValue: "\(weatherDetailData.humidity)%")
+        let pressureView = weatherDetailInfoComponent(imageName: "thermometer", fieldText: "Pressure", fieldValue: "\(weatherDetailData.pressure)hPa")
+        let visibilityView = weatherDetailInfoComponent(imageName: "visibility", fieldText: "Visibility", fieldValue: "\(weatherDetailData.visibility/1000) km")
+        let cloudinessView = weatherDetailInfoComponent(imageName: "cloud", fieldText: "Cloudiness", fieldValue: "\(weatherDetailData.cloudiness)%")
 
         weatherDetailContainer.addSubview(warmView)
         weatherDetailContainer.addSubview(windView)
