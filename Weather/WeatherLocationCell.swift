@@ -6,24 +6,25 @@
 //
 
 import UIKit
+import SwipeCellKit
 
-class WeatherLocationCell: UITableViewCell {
+class WeatherLocationCell: SwipeTableViewCell {
 
     // MARK - Views
-    internal lazy var timeLabel: UILabel = {
-        let label = UILabel()
-        
-        label.font = UIFont.systemFont(ofSize: 15, weight: .medium)
-        label.textColor = UIColor.transparentBlackFourty
-        label.translatesAutoresizingMaskIntoConstraints = false
-        
-        return label
-    }()
     
+    internal lazy var navigatorImage: UIImageView = {
+        let imageView = UIImageView()
+        
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return imageView
+    }()
+
     internal lazy var locationName: UILabel = {
         let label = UILabel()
         
-        label.font = UIFont.systemFont(ofSize: 21, weight: .medium)
+        label.font = UIFont.systemFont(ofSize: 23, weight: .medium)
         label.textColor = UIColor.transparentBlackSeventy
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -44,7 +45,7 @@ class WeatherLocationCell: UITableViewCell {
         let label = UILabel()
         
         label.font = UIFont.systemFont(ofSize: 33, weight: .medium)
-        label.textColor = UIColor.transparentBlackSeventy
+        label.textColor = UIColor.transparentBlackNinty
         label.translatesAutoresizingMaskIntoConstraints = false
         
         return label
@@ -76,6 +77,7 @@ class WeatherLocationCell: UITableViewCell {
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+        setupUIs()
     }
     
     func setupUIs() {
@@ -84,25 +86,28 @@ class WeatherLocationCell: UITableViewCell {
         contentView.addSubview(temperatureDegree)
         contentView.addSubview(temperatureLowHighDegree)
         contentView.addSubview(weatherImage)
-        
-        let navigationImage = UIImageView(image: UIImage(named: "location"))
-        navigationImage.contentMode = .scaleAspectFit
-        navigationImage.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(navigationImage)
+        contentView.addSubview(navigatorImage)
         
         NSLayoutConstraint.activate([
-            navigationImage.topAnchor.constraint(equalTo: contentView.layoutMarginsGuide.topAnchor),
-            navigationImage.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor),
-            navigationImage.widthAnchor.constraint(equalToConstant: 17),
-            navigationImage.heightAnchor.constraint(equalToConstant: 17),
+//            navigationImage.topAnchor.constraint(equalTo: contentView.layoutMarginsGuide.topAnchor),
+//            navigationImage.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor),
+//            navigationImage.widthAnchor.constraint(equalToConstant: 17),
+//            navigationImage.heightAnchor.constraint(equalToConstant: 17),
             
-            locationName.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            locationName.topAnchor.constraint(equalTo: contentView.layoutMarginsGuide.topAnchor),
             locationName.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor),
+            
+//            navigatorImage.leadingAnchor.constraint(equalTo: locationName.trailingAnchor, constant: 5),
+//            navigatorImage.centerYAnchor.constraint(equalTo: locationName.centerYAnchor),
+            navigatorImage.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            navigatorImage.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            navigatorImage.widthAnchor.constraint(equalToConstant: 20),
+            navigatorImage.heightAnchor.constraint(equalToConstant: 20),
             
             weatherType.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor),
             weatherType.bottomAnchor.constraint(equalTo: contentView.layoutMarginsGuide.bottomAnchor),
             
-            temperatureDegree.topAnchor.constraint(equalTo: navigationImage.topAnchor),
+            temperatureDegree.topAnchor.constraint(equalTo: locationName.topAnchor),
             temperatureDegree.trailingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.trailingAnchor),
             
             temperatureLowHighDegree.bottomAnchor.constraint(equalTo: weatherType.bottomAnchor),

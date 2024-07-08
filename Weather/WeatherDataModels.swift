@@ -8,12 +8,24 @@
 import Foundation
 
 struct WeatherData: Codable {
+    let coord: Coordinates
     let main: Main
     let weather: [Weather]
     let wind: Wind
     let clouds: Clouds
     let visibility: Int
     let name: String
+    var isMyLocation: Bool = false
+    
+    enum CodingKeys: String, CodingKey {
+        case coord
+        case main
+        case weather
+        case wind
+        case clouds
+        case visibility
+        case name
+    }
 }
 
 struct Main: Codable {
@@ -50,6 +62,11 @@ struct Clouds: Codable {
     let all: Int
 }
 
+struct Coordinates: Codable {
+    let lon: Double
+    let lat: Double
+}
+
 struct WeatherDetailData {
     var locationName: String = ""
     var temp: Int = 0
@@ -63,4 +80,15 @@ struct WeatherDetailData {
     var humidity: Int = 0
     var visibility: Int = 0
     var cloudiness: Int = 0
+    var latitude: Double = 0
+    var longtitude: Double = 0
+}
+
+// This model will be used to save data locally using UserDefaults
+
+struct CityInfo: Codable {
+    let cityName: String
+    let latitude: Double
+    let longitude: Double
+    var isMyLocation: Bool = false
 }

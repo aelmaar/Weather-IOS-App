@@ -7,19 +7,54 @@
 
 import UIKit
 
+// Delegate protocol to notify WeatherViewController when a new location is added
+protocol WeatherDetailViewControllerDelegate: AnyObject {
+    func addNewWeatherItem(_ weatherItem: WeatherData)
+}
+
 // UTILITY
 private func convertWindSpeedToKmh(_ speedInMps: Double) -> Int {
     return Int(speedInMps * 3.6)
 }
 
+// MARK - Additional functionalities
+extension WeatherDetailViewController {
+    private func setupLeftRightBarButtons() {
+        if !isNewLocation {
+            return
+        }
+        
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(dismissViewController))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewItem))
+    }
+    
+    @objc func dismissViewController() {
+        dismiss(animated: true)
+    }
+
+    @objc func addNewItem() {
+        let cityName = weatherData.name
+        let latitude = weatherData.coord.lat
+        let longtitude = weatherData.coord.lon
+
+        let newCityInfo = CityInfo(cityName: cityName, latitude: latitude, longitude: longtitude)
+        saveCityInfo(cityInfo: newCityInfo)
+        delegate?.addNewWeatherItem(self.weatherData)
+        dismiss(animated: true)
+    }
+}
+
 class WeatherDetailViewController: UIViewController {
 
     private let containerView = UIView()
-    var weatherDetailData: WeatherDetailData!
+    var weatherData: WeatherData!
+    var isNewLocation = false
+    var isCelsius = true
+    weak var delegate: WeatherDetailViewControllerDelegate?
     
     var temperatueDegree: UILabel = {
         let label = UILabel()
-        
+
         label.text = "22º"
         label.textColor = .transparentBlackSeventy
         label.font = .systemFont(ofSize: 64, weight: .bold)
@@ -62,22 +97,30 @@ class WeatherDetailViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        title = weatherDetailData.locationName
+        title = weatherData.name
         navigationItem.largeTitleDisplayMode = .never
 
+        setupLeftRightBarButtons() // Only when a new location is searched
         setupWeatherMainUI()
         setupWeatherDetailUI()
     }
 
     private func setupWeatherMainUI() {
         // Fill the informations
-        temperatueDegree.text = "\(weatherDetailData.temp)º"
-        weatherDescription.text = "\(weatherDetailData.description)"
-        temperatureLowHighDegree.text = "L:\(weatherDetailData.tempMin)º, H:\(weatherDetailData.tempMax)º"
-        weatherImage.image = UIImage(named: weatherDetailData.imageName)
+
+        let temp = convertTemperatureUnitValue(isCelsius: isCelsius, celsius: weatherData.main.temp)
+        let description = weatherData.weather[0].description
+        let tempMin = convertTemperatureUnitValue(isCelsius: isCelsius, celsius: weatherData.main.tempMin)
+        let tempMax = convertTemperatureUnitValue(isCelsius: isCelsius, celsius: weatherData.main.tempMax)
+        let weatherIcon = weatherData.weather[0].icon
+
+        temperatueDegree.text = "\(temp)º"
+        weatherDescription.text = "\(description)"
+        temperatureLowHighDegree.text = "L:\(tempMin)º, H:\(tempMax)º"
+        weatherImage.image = UIImage(named: getWeatherImage(weatherIcon: weatherIcon))
 
         containerView.translatesAutoresizingMaskIntoConstraints = false
-            
+
         containerView.addSubview(temperatueDegree)
         containerView.addSubview(weatherImage)
         containerView.addSubview(weatherDescription)
@@ -112,12 +155,19 @@ class WeatherDetailViewController: UIViewController {
 
         weatherDetailContainer.translatesAutoresizingMaskIntoConstraints = false
         
-        let warmView = weatherDetailInfoComponent(imageName: "celsius", fieldText: "Feel like", fieldValue: "\(weatherDetailData.feelsLike)º")
-        let windView = weatherDetailInfoComponent(imageName: "wind", fieldText: "Wind", fieldValue: "\(convertWindSpeedToKmh(weatherDetailData.windSpeed)) km/h")
-        let humidityView = weatherDetailInfoComponent(imageName: "humidity", fieldText: "Humidity", fieldValue: "\(weatherDetailData.humidity)%")
-        let pressureView = weatherDetailInfoComponent(imageName: "thermometer", fieldText: "Pressure", fieldValue: "\(weatherDetailData.pressure)hPa")
-        let visibilityView = weatherDetailInfoComponent(imageName: "visibility", fieldText: "Visibility", fieldValue: "\(weatherDetailData.visibility/1000) km")
-        let cloudinessView = weatherDetailInfoComponent(imageName: "cloud", fieldText: "Cloudiness", fieldValue: "\(weatherDetailData.cloudiness)%")
+        let feelsLike = convertTemperatureUnitValue(isCelsius: isCelsius, celsius: weatherData.main.feelsLike)
+        let windSpeed = weatherData.wind.speed
+        let humidity = weatherData.main.humidity
+        let pressure = weatherData.main.pressure
+        let visibility = weatherData.visibility / 1000
+        let cloudiness = weatherData.clouds.all
+        
+        let warmView = weatherDetailInfoComponent(imageName: "celsius", fieldText: "Feel like", fieldValue: "\(feelsLike)º")
+        let windView = weatherDetailInfoComponent(imageName: "wind", fieldText: "Wind", fieldValue: "\(convertWindSpeedToKmh(windSpeed)) km/h")
+        let humidityView = weatherDetailInfoComponent(imageName: "humidity", fieldText: "Humidity", fieldValue: "\(humidity)%")
+        let pressureView = weatherDetailInfoComponent(imageName: "thermometer", fieldText: "Pressure", fieldValue: "\(pressure)hPa")
+        let visibilityView = weatherDetailInfoComponent(imageName: "visibility", fieldText: "Visibility", fieldValue: "\(visibility/1000) km")
+        let cloudinessView = weatherDetailInfoComponent(imageName: "cloud", fieldText: "Cloudiness", fieldValue: "\(cloudiness)%")
 
         weatherDetailContainer.addSubview(warmView)
         weatherDetailContainer.addSubview(windView)

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		B13EDAF42C34D4B4001649BE /* WeatherDataModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = B13EDAF32C34D4B4001649BE /* WeatherDataModels.swift */; };
 		B14564EC2C2FD599006C59F2 /* WeatherComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = B14564EB2C2FD599006C59F2 /* WeatherComponents.swift */; };
+		B1613C6F2C37C3B90058B9CB /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = B1613C6E2C37C3B90058B9CB /* Settings.bundle */; };
 		B1644EA02C2F788F006A8A72 /* WeatherDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B1644E9F2C2F788F006A8A72 /* WeatherDetailViewController.swift */; };
 		B168FBB02C2D505F0088FC3F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B168FBAF2C2D505F0088FC3F /* AppDelegate.swift */; };
 		B168FBB22C2D505F0088FC3F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B168FBB12C2D505F0088FC3F /* SceneDelegate.swift */; };
@@ -17,11 +18,15 @@
 		B168FBBC2C2D50600088FC3F /* Base in Resources */ = {isa = PBXBuildFile; fileRef = B168FBBB2C2D50600088FC3F /* Base */; };
 		B168FBC42C2D81500088FC3F /* WeatherLocationCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = B168FBC32C2D81500088FC3F /* WeatherLocationCell.swift */; };
 		B168FBC62C2D866D0088FC3F /* CustomColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = B168FBC52C2D866D0088FC3F /* CustomColors.swift */; };
+		B16C845A2C354EFC008DFF10 /* SearchResultsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B16C84592C354EFC008DFF10 /* SearchResultsViewController.swift */; };
+		B16C845C2C355E0D008DFF10 /* WeatherUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = B16C845B2C355E0D008DFF10 /* WeatherUtils.swift */; };
+		B177809F2C3C19C800A40337 /* CustomMenuItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B177809E2C3C19C800A40337 /* CustomMenuItemView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		B13EDAF32C34D4B4001649BE /* WeatherDataModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDataModels.swift; sourceTree = "<group>"; };
 		B14564EB2C2FD599006C59F2 /* WeatherComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherComponents.swift; sourceTree = "<group>"; };
+		B1613C6E2C37C3B90058B9CB /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		B1644E9F2C2F788F006A8A72 /* WeatherDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherDetailViewController.swift; sourceTree = "<group>"; };
 		B168FBAC2C2D505F0088FC3F /* Weather.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Weather.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B168FBAF2C2D505F0088FC3F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -32,6 +37,9 @@
 		B168FBBD2C2D50600088FC3F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		B168FBC32C2D81500088FC3F /* WeatherLocationCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherLocationCell.swift; sourceTree = "<group>"; };
 		B168FBC52C2D866D0088FC3F /* CustomColors.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomColors.swift; sourceTree = "<group>"; };
+		B16C84592C354EFC008DFF10 /* SearchResultsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchResultsViewController.swift; sourceTree = "<group>"; };
+		B16C845B2C355E0D008DFF10 /* WeatherUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherUtils.swift; sourceTree = "<group>"; };
+		B177809E2C3C19C800A40337 /* CustomMenuItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomMenuItemView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -67,6 +75,10 @@
 				B168FBAF2C2D505F0088FC3F /* AppDelegate.swift */,
 				B168FBB12C2D505F0088FC3F /* SceneDelegate.swift */,
 				B168FBB32C2D505F0088FC3F /* WeatherViewController.swift */,
+				B177809E2C3C19C800A40337 /* CustomMenuItemView.swift */,
+				B1613C6E2C37C3B90058B9CB /* Settings.bundle */,
+				B16C845B2C355E0D008DFF10 /* WeatherUtils.swift */,
+				B16C84592C354EFC008DFF10 /* SearchResultsViewController.swift */,
 				B168FBB82C2D50600088FC3F /* Assets.xcassets */,
 				B168FBBA2C2D50600088FC3F /* LaunchScreen.storyboard */,
 				B168FBBD2C2D50600088FC3F /* Info.plist */,
@@ -138,6 +150,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				B168FBB92C2D50600088FC3F /* Assets.xcassets in Resources */,
+				B1613C6F2C37C3B90058B9CB /* Settings.bundle in Resources */,
 				B168FBBC2C2D50600088FC3F /* Base in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -149,13 +162,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B16C845C2C355E0D008DFF10 /* WeatherUtils.swift in Sources */,
 				B1644EA02C2F788F006A8A72 /* WeatherDetailViewController.swift in Sources */,
 				B168FBB42C2D505F0088FC3F /* WeatherViewController.swift in Sources */,
+				B177809F2C3C19C800A40337 /* CustomMenuItemView.swift in Sources */,
 				B168FBC62C2D866D0088FC3F /* CustomColors.swift in Sources */,
 				B14564EC2C2FD599006C59F2 /* WeatherComponents.swift in Sources */,
 				B168FBC42C2D81500088FC3F /* WeatherLocationCell.swift in Sources */,
 				B168FBB02C2D505F0088FC3F /* AppDelegate.swift in Sources */,
 				B13EDAF42C34D4B4001649BE /* WeatherDataModels.swift in Sources */,
+				B16C845A2C354EFC008DFF10 /* SearchResultsViewController.swift in Sources */,
 				B168FBB22C2D505F0088FC3F /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
