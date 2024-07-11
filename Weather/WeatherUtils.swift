@@ -9,7 +9,7 @@ import Foundation
 
 struct WeatherService {
 
-    static let apiKey = "9c3ebea404b5caabca4d58b5c28f7ff6"
+    static var apiKey = ""
     static func getWeatherData(from latitude: Double, and longtitude: Double, completion: @escaping (Result<WeatherData, Error>) -> Void) {
         let urlString = "https://api.openweathermap.org/data/2.5/weather?lat=\(latitude)&lon=\(longtitude)&appid=\(apiKey)&units=metric"
         guard let url = URL(string: urlString) else {
@@ -63,13 +63,16 @@ func getWeatherImage(weatherIcon: String) -> String {
 func saveCityInfo(cityInfo: CityInfo, insertFirstPosition: Bool = false) {
     let defaults = UserDefaults.standard
     var cityInfoArray = loadCityInfo() ?? []
+    var cityInfo = cityInfo
     
+    CityInfo.nextID = cityInfoArray.count
+    cityInfo.id = insertFirstPosition == true ? 0 : cityInfoArray[cityInfoArray.count - 1].id + 1
     if insertFirstPosition {
         cityInfoArray.insert(cityInfo, at: 0)
     } else {
         cityInfoArray.append(cityInfo)
     }
-    
+
     if let encoded = try? JSONEncoder().encode(cityInfoArray) {
         defaults.set(encoded, forKey: "SavedCities")
     }
@@ -98,7 +101,6 @@ func deleteCityInfo(index: Int) {
 }
 
 func saveTemperatureUnitType(_ type: Bool) {
-    
     UserDefaults.standard.set(type, forKey: "temperatureUnitType")
 }
 

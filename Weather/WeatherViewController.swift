@@ -7,7 +7,22 @@
 
 import UIKit
 import CoreLocation
-import SwipeCellKit
+
+// MARK - Search bar functionalities
+extension WeatherViewController {
+    @objc private func dismissSearch() {
+        searchController.isActive = false
+        overlayView.isHidden = true
+    }
+    
+    func searchBarTextDidBeginEditing(_ searchBar: UISearchBar) {
+        overlayView.isHidden = false
+    }
+    
+    func searchBarTextDidEndEditing(_ searchBar: UISearchBar) {
+        overlayView.isHidden = true
+    }
+}
 
 // MARK - Functionalities for current location data
 extension WeatherViewController: CLLocationManagerDelegate {
@@ -52,12 +67,10 @@ extension WeatherViewController: CLLocationManagerDelegate {
             }
         }
     }
-    
+
     private func updateCurrentLocationWeatherData(from latitude: Double, and longitude: Double) {
 
         if self.shouldUpdateLocation { // When All requests completed then fetch my current location weather data
-            print("Hellllloooooo")
-            print("Latitude: \(latitude), Longitude: \(longitude)")
             
                 WeatherService.getWeatherData(from: latitude, and: longitude) { [weak self] result in
                     guard let self = self else { return }
@@ -76,14 +89,14 @@ extension WeatherViewController: CLLocationManagerDelegate {
                         }
                         
                         saveCityInfo(cityInfo: newCityItem, insertFirstPosition: true)
-                        
+
                         DispatchQueue.main.async {
                             let newSectionCount = self.weatherData.count
                             let difference = newSectionCount - previousSectionCount
                             if difference > 0 {
                                 self.tableView.performBatchUpdates({
                                     let indexSet = IndexSet(integer: 0)
-                                    self.tableView.insertSections(indexSet, with: .automatic)
+                                    self.tableView.insertSections(indexSet, with: .fade)
                                 }, completion: nil)
                             } else {
                                 self.tableView.reloadSections(IndexSet(integer: 0), with: .automatic)
@@ -103,45 +116,21 @@ extension WeatherViewController: CLLocationManagerDelegate {
 extension WeatherViewController: WeatherDetailViewControllerDelegate {
 
     func addNewWeatherItem(_ weatherItem: WeatherData) {
-        print("Added new item and reloading table view")
-        print("City name: \(weatherItem.name)")
-        let previousSectionCount = self.weatherData.count
         self.weatherData.append(weatherItem)
-        print("After adding new item, weatherData count: \(self.weatherData.count)")
         self.searchController.isActive = false
 
         let newSectionCount = self.weatherData.count
-        DispatchQueue.main.async {
             self.tableView.performBatchUpdates({
                 let indexSet = IndexSet(integer: newSectionCount - 1)
                 self.tableView.insertSections(indexSet, with: .automatic)
             }, completion: nil)
-        }
     }
 
 }
 
-// MARK - TableView Delegates
+// MARK - TableView Delegate
 
-extension WeatherViewController: SwipeTableViewCellDelegate, UITableViewDelegate, UITableViewDataSource {
-    func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath, for orientation: SwipeCellKit.SwipeActionsOrientation) -> [SwipeCellKit.SwipeAction]? {
-        guard orientation == .right else { return nil }
-
-        let deleteAction = SwipeAction(style: .destructive, title: "Delete") { action, indexPath in
-            // handle action by updating model with deletion
-            deleteCityInfo(index: indexPath.section)
-            self.weatherData.remove(at: indexPath.section)
-            tableView.performBatchUpdates({
-                let indexSet = IndexSet(integer: indexPath.section)
-                tableView.deleteSections(indexSet, with: .automatic)
-            }, completion: nil)
-        }
-
-        // customize the action appearance
-        deleteAction.image = UIImage(systemName: "trash")
-
-        return [deleteAction]
-    }
+extension WeatherViewController: UITableViewDelegate, UITableViewDataSource {
     
     func numberOfSections(in tableView: UITableView) -> Int {
         return weatherData.count
@@ -156,12 +145,10 @@ extension WeatherViewController: SwipeTableViewCellDelegate, UITableViewDelegate
 
         let weatherInstance = weatherData[indexPath.section]
 
-        cell.delegate = self
         // customize the cell
         cell.backgroundColor = UIColor.transparentLightGray
         cell.layer.borderColor = UIColor.strokeGray.cgColor
-        cell.layer.borderWidth = 1
-        cell.layer.cornerRadius = 10
+        cell.layer.borderWidth = 0.5
 
         cell.locationName.text = weatherInstance.name
         cell.temperatureDegree.text = "\(convertTemperatureUnitValue(isCelsius: isCelsiusSelected, celsius: weatherInstance.main.temp))º"
@@ -177,27 +164,21 @@ extension WeatherViewController: SwipeTableViewCellDelegate, UITableViewDelegate
         return cell
     }
 
-//    func tableView(_ tableView: UITableView, editActionsOptionsForRowAt indexPath: IndexPath, for orientation: SwipeActionsOrientation) -> SwipeOptions {
-//        var option = SwipeOptions()
-//        
-//        return option
-//    }
-    @objc(tableView:heightForRowAtIndexPath:) func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 100
     }
     
-    @objc func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return 10
     }
 
-    @objc func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         let footerView = UIView()
         footerView.backgroundColor = UIColor.clear
         return footerView
     }
 
-    @objc(tableView:didSelectRowAtIndexPath:) func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
         let weatherDetailController = WeatherDetailViewController()
@@ -214,30 +195,30 @@ extension WeatherViewController: SwipeTableViewCellDelegate, UITableViewDelegate
         guard !self.weatherData[indexPath.section].isMyLocation else { return false }
         return true
     }
-    
-//    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-//        guard !self.weatherData[indexPath.section].isMyLocation else { return nil }
-//        
-//        let deleteAction = UIContextualAction(style: .destructive, title: "") { [weak self] (action, view, completionHandler) in
-//            guard let self = self else { return }
-//            deleteCityInfo(index: indexPath.section)
-//            self.weatherData.remove(at: indexPath.section)
-//            tableView.performBatchUpdates({
-//                let indexSet = IndexSet(integer: indexPath.section)
-//                tableView.deleteSections(indexSet, with: .automatic)
-//            }, completion: { _ in
-//                completionHandler(true)
-//            })
-//        }
-//        
-//        // Add custom delete icon
-//        deleteAction.image = UIImage(systemName: "trash")
-//        
-//        let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
-//        configuration.performsFirstActionWithFullSwipe = false // Prevents full swipe action
-//        
-//        return configuration
-//    }
+
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        guard !self.weatherData[indexPath.section].isMyLocation else { return nil }
+        
+        let deleteAction = UIContextualAction(style: .destructive, title: "") { [weak self] (action, view, completionHandler) in
+            guard let self = self else { return }
+            deleteCityInfo(index: indexPath.section)
+            self.weatherData.remove(at: indexPath.section)
+            tableView.performBatchUpdates({
+                let indexSet = IndexSet(integer: indexPath.section)
+                tableView.deleteSections(indexSet, with: .fade)
+            }, completion: { _ in
+                completionHandler(true)
+            })
+        }
+
+        // Add custom delete icon
+        deleteAction.image = UIImage(systemName: "trash")
+        
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
+        configuration.performsFirstActionWithFullSwipe = false
+        
+        return configuration
+    }
 }
 
 class WeatherViewController: UIViewController, UISearchBarDelegate {
@@ -247,6 +228,19 @@ class WeatherViewController: UIViewController, UISearchBarDelegate {
     var shouldUpdateLocation = false
     var isCelsiusSelected = true
 
+
+    private lazy var overlayView: UIView = {
+        
+        var overlayView = UIView()
+        overlayView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        overlayView.isHidden = true
+        view.addSubview(overlayView)
+
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(dismissSearch))
+        overlayView.addGestureRecognizer(tapGesture)
+        
+        return overlayView
+    }()
 
     private lazy var searchController: UISearchController = {
         let searchResultsController = SearchResultsViewController()
@@ -271,6 +265,7 @@ class WeatherViewController: UIViewController, UISearchBarDelegate {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.register(WeatherLocationCell.self, forCellReuseIdentifier: "weaatherLocationCell")
         tableView.isHidden = true
+        tableView.showsVerticalScrollIndicator = false
         
         return tableView
     }()
@@ -278,7 +273,7 @@ class WeatherViewController: UIViewController, UISearchBarDelegate {
     private lazy var loadingIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .large)
         indicator.translatesAutoresizingMaskIntoConstraints = false
-        indicator.startAnimating() // Start animating the loading indicator initially
+        indicator.startAnimating()
         
         return indicator
     }()
@@ -305,8 +300,32 @@ class WeatherViewController: UIViewController, UISearchBarDelegate {
         return UIMenu(title: "Temperature unit type", children: [celsiusAction, fahrenheitAction])
     }
 
+    // update the overlay frame based on the navigation bar frame updates
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        updateOverlayViewFrame()
+    }
+    
+    override func viewSafeAreaInsetsDidChange() {
+        super.viewSafeAreaInsetsDidChange()
+        updateOverlayViewFrame()
+    }
+
+    private func updateOverlayViewFrame() {
+        guard let navBar = navigationController?.navigationBar.frame else { return }
+        
+        overlayView.frame = CGRect(x: 0, y: navBar.maxY, width: view.bounds.width, height: view.bounds.height - navBar.height)
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        // Get the api key from AppConfig
+        if let apiKey = Bundle.main.infoDictionary?["API_KEY"] as? String {
+            WeatherService.apiKey = apiKey
+        } else {
+            fatalError("API Key not found in config file.")
+        }
+
         // Do any additional setup after loading the view.
         self.isCelsiusSelected = getTemperatureUnitType() ?? true
         setupMenuButton()
@@ -349,10 +368,9 @@ class WeatherViewController: UIViewController, UISearchBarDelegate {
 
     // Load weather data from the OpenWeatherApi by accessing UserDefaults
     private func fetchAllSavedLocations(completion: @escaping () -> Void) {
-        var weatherDataDictionary: [String: WeatherData] = [:]
+        var weatherDataDictionary: [Int: WeatherData] = [:]
 
         if let cityInfo = loadCityInfo() {
-            print("The number of saved locations \(cityInfo.count)")
             let group = DispatchGroup()
             if cityInfo.isEmpty {
                 completion()
@@ -363,7 +381,7 @@ class WeatherViewController: UIViewController, UISearchBarDelegate {
                     switch result {
                         case .success(var weatherResponse):
                             weatherResponse.isMyLocation = location.isMyLocation
-                            weatherDataDictionary[location.cityName] = weatherResponse
+                            weatherDataDictionary[location.id] = weatherResponse
                         case .failure(let error):
                             print("Error fetching weather data: \(error.localizedDescription)")
                     }
@@ -371,7 +389,7 @@ class WeatherViewController: UIViewController, UISearchBarDelegate {
                 }
             }
             group.notify(queue: .main) {
-                self.weatherData = cityInfo.compactMap { weatherDataDictionary[$0.cityName] }
+                self.weatherData = cityInfo.compactMap { weatherDataDictionary[$0.id] }
                 self.tableView.reloadData()
                 completion()
             }

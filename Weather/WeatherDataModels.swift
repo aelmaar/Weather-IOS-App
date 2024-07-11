@@ -7,6 +7,8 @@
 
 import Foundation
 
+// This model for JSON data parser
+
 struct WeatherData: Codable {
     let coord: Coordinates
     let main: Main
@@ -67,26 +69,11 @@ struct Coordinates: Codable {
     let lat: Double
 }
 
-struct WeatherDetailData {
-    var locationName: String = ""
-    var temp: Int = 0
-    var description: String = ""
-    var imageName: String = ""
-    var tempMin: Int = 0
-    var tempMax: Int = 0
-    var feelsLike: Int = 0
-    var windSpeed: Double = 0.0
-    var pressure: Int = 0
-    var humidity: Int = 0
-    var visibility: Int = 0
-    var cloudiness: Int = 0
-    var latitude: Double = 0
-    var longtitude: Double = 0
-}
-
 // This model will be used to save data locally using UserDefaults
 
 struct CityInfo: Codable {
+    static var nextID: Int = 0
+    var id: Int = 0
     let cityName: String
     let latitude: Double
     let longitude: Double

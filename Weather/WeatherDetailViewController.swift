@@ -24,7 +24,15 @@ extension WeatherDetailViewController {
             return
         }
         
+        let cityInfoArray = loadCityInfo()
+        let latitude = self.weatherData.coord.lat
+        let longitude = self.weatherData.coord.lon
+        
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(dismissViewController))
+        
+        if cityInfoArray!.contains(where: { $0.latitude == latitude && $0.longitude == longitude}) {
+            return
+        }
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addNewItem))
     }
     
@@ -37,7 +45,7 @@ extension WeatherDetailViewController {
         let latitude = weatherData.coord.lat
         let longtitude = weatherData.coord.lon
 
-        let newCityInfo = CityInfo(cityName: cityName, latitude: latitude, longitude: longtitude)
+        let newCityInfo = CityInfo(id: 0, cityName: cityName, latitude: latitude, longitude: longtitude)
         saveCityInfo(cityInfo: newCityInfo)
         delegate?.addNewWeatherItem(self.weatherData)
         dismiss(animated: true)
@@ -52,7 +60,16 @@ class WeatherDetailViewController: UIViewController {
     var isCelsius = true
     weak var delegate: WeatherDetailViewControllerDelegate?
     
-    var temperatueDegree: UILabel = {
+    lazy var navigatorImage: UIImageView = {
+        let imageView = UIImageView()
+        
+        imageView.contentMode = .scaleAspectFit
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return imageView
+    }()
+
+    lazy var temperatueDegree: UILabel = {
         let label = UILabel()
 
         label.text = "22º"
@@ -63,7 +80,7 @@ class WeatherDetailViewController: UIViewController {
         return label
     }()
 
-    var weatherImage: UIImageView = {
+    lazy var weatherImage: UIImageView = {
         let imageView = UIImageView()
 
         imageView.translatesAutoresizingMaskIntoConstraints = false
@@ -72,7 +89,7 @@ class WeatherDetailViewController: UIViewController {
         return imageView
     }()
     
-    var weatherDescription: UILabel = {
+    lazy var weatherDescription: UILabel = {
         let label = UILabel()
         
         label.text = "Clear Sky"
@@ -83,7 +100,7 @@ class WeatherDetailViewController: UIViewController {
         return label
     }()
 
-    var temperatureLowHighDegree: UILabel = {
+    lazy var temperatureLowHighDegree: UILabel = {
         let label = UILabel()
         
         label.text = "L:20º, H:27º"
@@ -113,11 +130,15 @@ class WeatherDetailViewController: UIViewController {
         let tempMin = convertTemperatureUnitValue(isCelsius: isCelsius, celsius: weatherData.main.tempMin)
         let tempMax = convertTemperatureUnitValue(isCelsius: isCelsius, celsius: weatherData.main.tempMax)
         let weatherIcon = weatherData.weather[0].icon
-
+        let isMyLocation = weatherData.isMyLocation
+        
         temperatueDegree.text = "\(temp)º"
         weatherDescription.text = "\(description)"
         temperatureLowHighDegree.text = "L:\(tempMin)º, H:\(tempMax)º"
         weatherImage.image = UIImage(named: getWeatherImage(weatherIcon: weatherIcon))
+        if isMyLocation {
+            navigatorImage.image = UIImage(named: "navigation")
+        }
 
         containerView.translatesAutoresizingMaskIntoConstraints = false
 
@@ -125,6 +146,7 @@ class WeatherDetailViewController: UIViewController {
         containerView.addSubview(weatherImage)
         containerView.addSubview(weatherDescription)
         containerView.addSubview(temperatureLowHighDegree)
+        containerView.addSubview(navigatorImage)
 
         view.addSubview(containerView)
 
@@ -136,6 +158,10 @@ class WeatherDetailViewController: UIViewController {
             
             temperatueDegree.topAnchor.constraint(equalTo: containerView.layoutMarginsGuide.topAnchor),
             temperatueDegree.centerXAnchor.constraint(equalTo: containerView.centerXAnchor),
+            
+            navigatorImage.leadingAnchor.constraint(equalTo: temperatueDegree.trailingAnchor),
+            navigatorImage.widthAnchor.constraint(equalToConstant: 20),
+            navigatorImage.heightAnchor.constraint(equalToConstant: 20),
             
             weatherImage.centerXAnchor.constraint(equalTo: temperatueDegree.centerXAnchor),
             weatherImage.topAnchor.constraint(equalTo: temperatueDegree.bottomAnchor, constant: 10),

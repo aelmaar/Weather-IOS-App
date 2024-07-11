@@ -6,9 +6,8 @@
 //
 
 import UIKit
-import SwipeCellKit
 
-class WeatherLocationCell: SwipeTableViewCell {
+class WeatherLocationCell: UITableViewCell {
 
     // MARK - Views
     
@@ -89,16 +88,10 @@ class WeatherLocationCell: SwipeTableViewCell {
         contentView.addSubview(navigatorImage)
         
         NSLayoutConstraint.activate([
-//            navigationImage.topAnchor.constraint(equalTo: contentView.layoutMarginsGuide.topAnchor),
-//            navigationImage.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor),
-//            navigationImage.widthAnchor.constraint(equalToConstant: 17),
-//            navigationImage.heightAnchor.constraint(equalToConstant: 17),
             
             locationName.topAnchor.constraint(equalTo: contentView.layoutMarginsGuide.topAnchor),
             locationName.leadingAnchor.constraint(equalTo: contentView.layoutMarginsGuide.leadingAnchor),
-            
-//            navigatorImage.leadingAnchor.constraint(equalTo: locationName.trailingAnchor, constant: 5),
-//            navigatorImage.centerYAnchor.constraint(equalTo: locationName.centerYAnchor),
+
             navigatorImage.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             navigatorImage.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
             navigatorImage.widthAnchor.constraint(equalToConstant: 20),

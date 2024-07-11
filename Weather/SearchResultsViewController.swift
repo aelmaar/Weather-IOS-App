@@ -17,7 +17,21 @@ extension SearchResultsViewController: UITableViewDelegate, UITableViewDataSourc
         let cell = tableView.dequeueReusableCell(withIdentifier: "locationCell", for: indexPath)
 
         let mapItem = searchRestuls[indexPath.row]
-        cell.textLabel?.text = mapItem.placemark.locality
+        
+        var location = ""
+        if let name = mapItem.placemark.name {
+            location += name + ", "
+        }
+        if let locality = mapItem.placemark.locality {
+            location += locality + ", "
+        }
+        if let country = mapItem.placemark.country {
+            location += country
+        }
+
+        
+        cell.textLabel?.text = location
+
         return cell
     }
 
@@ -37,7 +51,6 @@ extension SearchResultsViewController: UITableViewDelegate, UITableViewDataSourc
                     weatherDetailController.delegate = self?.mainViewController
                     weatherDetailController.isCelsius = getTemperatureUnitType() ?? true
                     let navController = UINavigationController(rootViewController: weatherDetailController)
-                    navController.modalPresentationStyle = .fullScreen
 
                     weatherDetailController.weatherData = weatherResponse
                     weatherDetailController.isNewLocation = true
@@ -92,12 +105,6 @@ class SearchResultsViewController: UIViewController, UISearchResultsUpdating {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "locationCell")
         view.addSubview(tableView)
         navigationItem.hidesSearchBarWhenScrolling = false
-//        navigationController?.isNavigationBarHidden = true
-
-//        addChild(customNavigationController)
-//        customNavigationController.view.frame = view.bounds
-//        view.addSubview(customNavigationController.view)
-//        customNavigationController.didMove(toParent: self)
     }
     
 
