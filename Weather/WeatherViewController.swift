@@ -71,7 +71,6 @@ extension WeatherViewController: CLLocationManagerDelegate {
     private func updateCurrentLocationWeatherData(from latitude: Double, and longitude: Double) {
 
         if self.shouldUpdateLocation { // When All requests completed then fetch my current location weather data
-            
                 WeatherService.getWeatherData(from: latitude, and: longitude) { [weak self] result in
                     guard let self = self else { return }
                     switch result {
@@ -353,12 +352,12 @@ class WeatherViewController: UIViewController, UISearchBarDelegate {
 
         // Get location access and data
         locationManager = CLLocationManager()
+        locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.requestWhenInUseAuthorization()
 
         fetchAllSavedLocations() { [weak self] in // Load the previously saved location data and update the state of the current location
             self?.shouldUpdateLocation = true
-            self?.locationManager.delegate = self
-            self?.locationManager.desiredAccuracy = kCLLocationAccuracyBest
-            self?.locationManager.requestWhenInUseAuthorization()
             self?.locationManager.startUpdatingLocation()
             self?.loadingIndicator.stopAnimating()
             self?.loadingIndicator.isHidden = true
