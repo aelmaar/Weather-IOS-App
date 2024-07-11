@@ -12,25 +12,32 @@ extension SearchResultsViewController: UITableViewDelegate, UITableViewDataSourc
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return searchRestuls.count
     }
+
+    // Join a specific location (name, locality and country) without duplicates from MKPlacemark
+    private func filterDuplicatesOnLocationName(from mapItem: MKPlacemark) -> String {
+        var uniqueLocationName = Array<String>()
+        var filteredName = ""
+        
+        if let name = mapItem.name {
+            uniqueLocationName.append(name)
+        }
+        if let locality = mapItem.locality, !uniqueLocationName.contains(locality) {
+            uniqueLocationName.append(locality)
+        }
+        if let country = mapItem.country, !uniqueLocationName.contains(country) {
+            uniqueLocationName.append(country)
+        }
+        
+        filteredName = uniqueLocationName.joined(separator: ", ")
+        return filteredName
+    }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "locationCell", for: indexPath)
 
         let mapItem = searchRestuls[indexPath.row]
         
-        var location = ""
-        if let name = mapItem.placemark.name {
-            location += name + ", "
-        }
-        if let locality = mapItem.placemark.locality {
-            location += locality + ", "
-        }
-        if let country = mapItem.placemark.country {
-            location += country
-        }
-
-        
-        cell.textLabel?.text = location
+        cell.textLabel?.text = filterDuplicatesOnLocationName(from: mapItem.placemark)
 
         return cell
     }

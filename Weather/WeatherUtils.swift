@@ -35,7 +35,6 @@ struct WeatherService {
                 let weatherResponse = try decoder.decode(WeatherData.self, from: data)
                 completion(.success(weatherResponse))
             } catch {
-                print("Error from her?")
                 completion(.failure(error))
             }
         }
